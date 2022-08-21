@@ -7,6 +7,7 @@ import { AuthDTO } from '../src/auth/dto';
 import { EditUserDto } from '../src/user/dto';
 import { CreateArtistDto, EditArtistDto } from '../src/artist/dto';
 import { CreateAlbumDto } from 'src/album/dto';
+import { CreateTrackDto } from 'src/track/dto';
 
 describe('App init', () => {
   let app: INestApplication;
@@ -303,6 +304,123 @@ describe('App init', () => {
         return pactum
           .spec()
           .get('/albums/by-artist/$S{artist_id}')
+          .withHeaders({
+            Authorization: `Bearer $S{userAt}`,
+          })
+          .expectStatus(200)
+          .expectBody([]);
+      });
+    });
+  });
+  describe('Track', () => {
+    describe('get Tracks', () => {
+      it('Create Artist', async () => {
+        const dto: CreateArtistDto = {
+          name: 'FL_WEB',
+          description: '58, 6,528 updated on Jul 14, 2022',
+          link: 'https://www.youtube.com/playlist?list=PLDxO0t2Gkko-nZivNhrmYjZhZ6lM5NX6A',
+        };
+        return pactum
+          .spec()
+          .post('/artists')
+          .withBody(dto)
+          .withHeaders({
+            Authorization: `Bearer $S{userAt}`,
+          })
+          .stores('artist_id', 'id')
+          .expectStatus(201);
+      });
+      it('create album', async () => {
+        const dto: CreateAlbumDto = {
+          title: 'FL_WEB Random',
+          description: '159, 6,528 updated on Jul 14, 2022',
+          link: 'https://www.youtube.com/playlist?list=PLDxO0t2Gkko-nZivNhrmYjZhZ6lM5NX6A',
+        };
+        return pactum
+          .spec()
+          .post('/albums/by-artist/$S{artist_id}')
+          .withBody(dto)
+          .withHeaders({
+            Authorization: `Bearer $S{userAt}`,
+          })
+          .stores('album_id', 'id')
+          .expectStatus(201)
+          .inspect();
+      });
+
+      it('should get empty tracks', async () => {
+        return pactum
+          .spec()
+          .get('/tracks/by-album/$S{album_id}')
+          .withHeaders({
+            Authorization: `Bearer $S{userAt}`,
+          })
+          .expectStatus(200)
+          .expectBody([]);
+      });
+
+      it('create track', async () => {
+        const dto: CreateTrackDto = {
+          title: 'FL_WEB Random Track',
+          description: '159, 9,528 updated on Jul 14, 2022',
+          link: 'https://www.youtube.com/playlist?list=PLDxO0t2Gkko-nZivNhrmYjZhZ6lM5NX6A',
+        };
+        return pactum
+          .spec()
+          .post('/tracks/by-album/$S{album_id}')
+          .withBody(dto)
+          .withHeaders({
+            Authorization: `Bearer $S{userAt}`,
+          })
+          .expectStatus(201);
+      });
+      it('should get one track', async () => {
+        return pactum
+          .spec()
+          .get('/tracks/by-album/$S{album_id}')
+          .withHeaders({
+            Authorization: `Bearer $S{userAt}`,
+          })
+          .expectStatus(200)
+          .stores('track_id', 'id')
+          .expectJsonLength(1);
+      });
+      it('should get one track', async () => {
+        return pactum
+          .spec()
+          .get('/tracks/$S{track_id}')
+          .withHeaders({
+            Authorization: `Bearer $S{userAt}`,
+          })
+          .expectStatus(200)
+          .inspect();
+      });
+      it('edit album', async () => {
+        const dto: EditArtistDto = {
+          description: '58, 10,528 updated on Jul 14, 2022',
+        };
+        return pactum
+          .spec()
+          .patch('/tracks/$S{track_id}')
+          .withBody(dto)
+          .withHeaders({
+            Authorization: `Bearer $S{userAt}`,
+          })
+          .expectStatus(200);
+      });
+      it('delete album', async () => {
+        return pactum
+          .spec()
+          .delete('/tracks/$S{track_id}')
+          .withHeaders({
+            Authorization: `Bearer $S{userAt}`,
+          })
+          .expectStatus(204);
+      });
+      it('should get empty albums after deleting', async () => {
+        return pactum
+          .spec()
+          .get('/tracks/by-album/$S{album_id}')
           .withHeaders({
             Authorization: `Bearer $S{userAt}`,
           })

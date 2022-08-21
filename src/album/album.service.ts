@@ -13,8 +13,6 @@ export class AlbumService {
         userId,
       },
     });
-    console.log("{ id: artistId, userId, }", { id: artistId, userId, })
-    console.log("{ id: artistId, userId, }", await this.prisma.artist.findMany())
     if (!artist) throw new ForbiddenException();
     const albums = await this.prisma.album.findMany({
       where: {

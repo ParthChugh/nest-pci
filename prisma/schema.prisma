@@ -53,8 +53,6 @@ model Track {
   albumId   Int
   album     Album      @relation(fields: [albumId], references: [id])
   favorites Favorite[]
-  artistId  Int?
-  artist    Artist?    @relation(fields: [artistId], references: [id])
 
   @@map("tracks")
 }
@@ -70,7 +68,6 @@ model Artist {
   userId    Int
   user      User       @relation(fields: [userId], references: [id])
   albums    Album[]
-  tracks    Track[]
   favorites Favorite[]
 
   @@map("artists")
