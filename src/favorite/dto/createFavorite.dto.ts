@@ -1,14 +1,16 @@
-import { IsOptional, IsString, IsUrl } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsNumber, IsOptional } from 'class-validator';
 
 export class CreateFavoriteDto {
-  @IsString()
-  title: string;
-
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  description?: string;
+  trackId?: string;
 
-  @IsString()
-  @IsUrl()
-  link: string;
+  @IsNumber()
+  @IsOptional()
+  artistId?: string;
+
+  @IsNumber()
+  @IsOptional()
+  albumId?: string;
 }
