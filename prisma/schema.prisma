@@ -20,13 +20,12 @@ model User {
 
   firstName String?
   lastName  String?
-  bookmarks Bookmark[]
-  
+  artists   Artist[]
+
   @@map("users")
-  
 }
 
-model Bookmark {
+model Album {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -34,8 +33,62 @@ model Bookmark {
   description String?
   link        String
 
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
+  tracks    Track[]
+  favorites Favorite[]
 
-  @@map("bookmarks")
+  artistId Int
+  artist   Artist @relation(fields: [artistId], references: [id])
+
+  @@map("albums")
+}
+
+model Track {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  title       String
+  description String?
+  link        String
+
+  albumId   Int
+  album     Album      @relation(fields: [albumId], references: [id])
+  favorites Favorite[]
+  artistId  Int?
+  artist    Artist?    @relation(fields: [artistId], references: [id])
+
+  @@map("tracks")
+}
+
+model Artist {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
+  description String?
+  link        String
+
+  userId    Int
+  user      User       @relation(fields: [userId], references: [id])
+  albums    Album[]
+  tracks    Track[]
+  favorites Favorite[]
+
+  @@map("artists")
+}
+
+model Favorite {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  title       String
+  description String?
+  link        String
+  albumId     Int?
+  album       Album?   @relation(fields: [albumId], references: [id])
+  trackId     Int?
+  track       Track?   @relation(fields: [trackId], references: [id])
+  artistId    Int?
+  artist      Artist?  @relation(fields: [artistId], references: [id])
+
+  @@map("favorites")
 }
